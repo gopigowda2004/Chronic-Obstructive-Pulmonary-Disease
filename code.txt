@@ -1,0 +1,1 @@
+the replacement of image to icon and styling should also be done on @register.html like the @login.html ,

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - COPD Prediction System</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="auth-page">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-lungs text-primary"></i>
+            COPD Prediction System
+        </div>
+        <div class="nav-links">
+            <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h2>Login to Your Account</h2>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="auth-button">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register"><i class="fas fa-user-plus"></i> Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Login failed: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

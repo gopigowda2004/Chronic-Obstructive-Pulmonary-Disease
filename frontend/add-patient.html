@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Patient - COPD Prediction System</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="form-page">
+    <nav class="navbar">
+        <div class="nav-brand">COPD Prediction System</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/logout" class="nav-link">Logout</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h1>Add New Patient</h1>
+        <form id="addPatientForm" class="form">
+            <div class="form-group">
+                <label for="name">Patient Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" required min="1" max="120">
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select gender</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="primary-button">Add Patient</button>
+                <a href="/dashboard" class="secondary-button">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                age: parseInt(document.getElementById('age').value),
+                gender: document.getElementById('gender').value
+            };
+            
+            try {
+                const response = await fetch('/add-patient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Error adding patient: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding patient. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html> 

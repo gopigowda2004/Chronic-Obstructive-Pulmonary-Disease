@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - COPD Prediction System</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page">
+    <nav class="navbar">
+        <div class="nav-brand">COPD Prediction System</div>
+        <div class="nav-links">
+            <a href="/prediction-form" class="nav-link">New Prediction</a>
+            <a href="/logout" class="nav-link">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Welcome to Your Dashboard</h1>
+            <a href="/prediction-form" class="primary-button">Make New Prediction</a>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>Recent Predictions</h3>
+                <div class="recent-predictions">
+                    {% for prediction in predictions %}
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-date">{{ prediction.timestamp.split('T')[0] }}</span>
+                            <span class="prediction-severity">Severity: {{ prediction.severity }}</span>
+                        </div>
+                        <div class="prediction-details">
+                            <p>Age: {{ prediction.input_data.AGE }}</p>
+                            <p>FEV1: {{ prediction.input_data.FEV1 }}</p>
+                            <p>FVC: {{ prediction.input_data.FVC }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Severity Distribution</h3>
+                <canvas id="severityChart"></canvas>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Key Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <h4>Total Predictions</h4>
+                        <p class="metric-value">{{ predictions|length }}</p>
+                    </div>
+                    <div class="metric-item">
+                        <h4>Last Prediction</h4>
+                        <p class="metric-value">{{ predictions[-1].timestamp.split('T')[0] if predictions else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>COPD Resources</h3>
+                <div class="resources-list">
+                    <a href="#" class="resource-link">
+                        <span class="resource-title">Understanding COPD Stages</span>
+                        <span class="resource-type">Article</span>
+                    </a>
+                    <a href="#" class="resource-link">
+                        <span class="resource-title">Treatment Guidelines</span>
+                        <span class="resource-type">PDF</span>
+                    </a>
+                    <a href="#" class="resource-link">
+                        <span class="resource-title">Latest Research</span>
+                        <span class="resource-type">Journal</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="dashboard-card patient-list-card">
+                <div class="card-header">
+                    <h3>Patient List</h3>
+                    <button onclick="openAddPatientModal()" class="secondary-button">Add New Patient</button>
+                </div>
+                <div class="patient-list">
+                    {% for patient in patients %}
+                    <div class="patient-item">
+                        <div class="patient-info">
+                            <h4>{{ patient.name }}</h4>
+                            <p>ID: {{ patient.id }}</p>
+                            <p>Age: {{ patient.age }}</p>
+                            <p>Last Visit: {{ patient.last_visit.split('T')[0] if patient.last_visit else 'N/A' }}</p>
+                        </div>
+                        <div class="patient-actions">
+                            <a href="/patient/{{ patient.id }}/predictions" class="view-button">View Predictions</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Patient Modal -->
+    <div id="addPatientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Patient</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="addPatientForm" class="form">
+                <div class="form-group">
+                    <label for="name">Patient Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" required min="1" max="120">
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">Add Patient</button>
+                    <button type="button" class="secondary-button" onclick="closeAddPatientModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .secondary-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #45a049;
+        }
+
+        .patient-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .patient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .patient-item:last-child {
+            border-bottom: none;
+        }
+
+        .patient-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+
+        .patient-info p {
+            margin: 0.25rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .view-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .view-button:hover {
+            background-color: #1976D2;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        /* Form Styles */
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .primary-button,
+        .secondary-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .primary-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #45a049;
+        }
+
+        .secondary-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .secondary-button:hover {
+            background-color: #da190b;
+        }
+    </style>
+
+    <script>
+        // Calculate severity distribution
+        const predictions = {{ predictions|tojson }};
+        const severityCounts = predictions.reduce((acc, pred) => {
+            acc[pred.severity] = (acc[pred.severity] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Create severity distribution chart
+        const ctx = document.getElementById('severityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(severityCounts),
+                datasets: [{
+                    data: Object.values(severityCounts),
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Modal Functions
+        function openAddPatientModal() {
+            document.getElementById('addPatientModal').style.display = 'block';
+        }
+
+        function closeAddPatientModal() {
+            document.getElementById('addPatientModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addPatientModal');
+            if (event.target == modal) {
+                closeAddPatientModal();
+            }
+        }
+
+        // Close modal when clicking X
+        document.querySelector('.close-modal').onclick = closeAddPatientModal;
+
+        // Handle form submission
+        document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                age: parseInt(document.getElementById('age').value),
+                gender: document.getElementById('gender').value
+            };
+            
+            try {
+                const response = await fetch('/add-patient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error adding patient: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding patient. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Predictions - COPD Prediction System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #3498db;
+        }
+
+        /* Modern Dashboard Layout */
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Modern Header Section */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .header-content h1 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 2.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-content h1::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            border-radius: 2px;
+        }
+
+        /* Modern Patient Info Card */
+        .patient-info {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .patient-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .patient-info h2 {
+            margin: 0;
+            color: #3498db;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .patient-info h2 i {
+            font-size: 1.4rem;
+            color: #3498db;
+            background: #e0f2fe;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .patient-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .patient-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .patient-detail-item i {
+            font-size: 1.2rem;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .patient-detail-item p {
+            margin: 0;
+            color: #475569;
+            font-size: 1rem;
+        }
+
+        /* Modern Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Modern Card Design */
+        .dashboard-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dashboard-card h3 i {
+            color: #3498db;
+            font-size: 1.4rem;
+            background: #e0f2fe;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        /* Modern Predictions List */
+        .predictions-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .predictions-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .predictions-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .predictions-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .predictions-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .prediction-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .prediction-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-color: #3498db;
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .prediction-date {
+            color: #64748b;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-date i {
+            color: #94a3b8;
+        }
+
+        .prediction-severity {
+            font-weight: 500;
+            color: #3498db;
+            padding: 0.5rem 1rem;
+            background: #e0f2fe;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .prediction-details p {
+            margin: 0;
+            color: #475569;
+            font-size: 1rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-details p i {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Modern Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-color: #3498db;
+        }
+
+        .metric-item h4 {
+            margin: 0 0 1rem;
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .metric-item h4 i {
+            color: #94a3b8;
+        }
+
+        .metric-value {
+            margin: 0;
+            color: #3498db;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* Chart Styling */
+        #severityChart {
+            max-height: 300px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-lungs"></i>
+            COPD Prediction System
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="header-content">
+                <h1>Patient Predictions</h1>
+                <div class="patient-info">
+                    <h2><i class="fas fa-user"></i>{{ patient.name }}</h2>
+                    <div class="patient-details">
+                        <div class="patient-detail-item">
+                            <i class="fas fa-id-card"></i>
+                            <p>ID: {{ patient.id }}</p>
+                        </div>
+                        <div class="patient-detail-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <p>Age: {{ patient.age }}</p>
+                        </div>
+                        <div class="patient-detail-item">
+                            <i class="fas fa-venus-mars"></i>
+                            <p>Gender: {{ patient.gender }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3><i class="fas fa-history"></i>Prediction History</h3>
+                <div class="predictions-list">
+                    {% for prediction in predictions %}
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-date"><i class="fas fa-calendar"></i>{{ prediction.timestamp.split('T')[0] }}</span>
+                            <span class="prediction-severity"><i class="fas fa-chart-line"></i>Severity: {{ prediction.severity }}</span>
+                        </div>
+                        <div class="prediction-details">
+                            <p><i class="fas fa-lungs"></i>FEV1: {{ prediction.input_data.FEV1 }}</p>
+                            <p><i class="fas fa-lungs"></i>FVC: {{ prediction.input_data.FVC }}</p>
+                            <p><i class="fas fa-clipboard-check"></i>CAT Score: {{ prediction.input_data.CAT }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3><i class="fas fa-chart-pie"></i>Severity Distribution</h3>
+                <canvas id="severityChart"></canvas>
+            </div>
+
+            <div class="dashboard-card">
+                <h3><i class="fas fa-chart-bar"></i>Key Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <h4><i class="fas fa-calculator"></i>Total Predictions</h4>
+                        <p class="metric-value">{{ predictions|length }}</p>
+                    </div>
+                    <div class="metric-item">
+                        <h4><i class="fas fa-clock"></i>Last Prediction</h4>
+                        <p class="metric-value">{{ predictions[-1].timestamp.split('T')[0] if predictions else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calculate severity distribution
+        const predictionsData = {{ predictions|tojson }};
+        const severityCounts = predictionsData.reduce((acc, pred) => {
+            acc[pred.severity] = (acc[pred.severity] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Create severity distribution chart
+        const ctx = document.getElementById('severityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(severityCounts),
+                datasets: [{
+                    data: Object.values(severityCounts),
+                    backgroundColor: [
+                        'rgba(52, 152, 219, 0.8)',
+                        'rgba(231, 76, 60, 0.8)',
+                        'rgba(241, 196, 15, 0.8)',
+                        'rgba(46, 204, 113, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

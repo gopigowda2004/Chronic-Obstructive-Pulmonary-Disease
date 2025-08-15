@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Prediction - COPD Prediction System</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Modern styling enhancements */
+        .form-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .form-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .form-section h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-section h3 i {
+            color: #3498db;
+            font-size: 1.4rem;
+            background: #e0f2fe;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+            outline: none;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #475569;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-group label:hover {
+            background: #f1f5f9;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .primary-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .primary-button i {
+            font-size: 1.2rem;
+        }
+
+        .results-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .results-section h2 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .results-section h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+
+        .severity-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .probability-chart {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Modern scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-lungs"></i>
+            COPD Prediction System
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <div class="form-container">
+            <form id="predictionForm">
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Patient Information</h3>
+                    <div class="input-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="AGE" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-stethoscope"></i> Clinical Measurements</h3>
+                    <div class="input-group">
+                        <label for="packHistory">Pack History:</label>
+                        <input type="number" id="packHistory" name="PackHistory" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="mwt1Best">6-Minute Walk Test (meters):</label>
+                        <input type="number" id="mwt1Best" name="MWT1Best" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="fev1">FEV1:</label>
+                        <input type="number" step="0.1" id="fev1" name="FEV1" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="fev1pred">FEV1 Predicted (%):</label>
+                        <input type="number" id="fev1pred" name="FEV1PRED" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="fvc">FVC:</label>
+                        <input type="number" step="0.1" id="fvc" name="FVC" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="fvcpred">FVC Predicted (%):</label>
+                        <input type="number" id="fvcpred" name="FVCPRED" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-clipboard-check"></i> Assessment Scores</h3>
+                    <div class="input-group">
+                        <label for="cat">CAT Score:</label>
+                        <input type="number" id="cat" name="CAT" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="had">HAD Score:</label>
+                        <input type="number" id="had" name="HAD" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="sgrq">SGRQ Score:</label>
+                        <input type="number" id="sgrq" name="SGRQ" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-notes-medical"></i> Medical History</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="diabetes" name="Diabetes"> Diabetes</label>
+                        <label><input type="checkbox" id="muscular" name="muscular"> Muscular</label>
+                        <label><input type="checkbox" id="hypertension" name="hypertension"> Hypertension</label>
+                        <label><input type="checkbox" id="atrialFib" name="AtrialFib"> Atrial Fibrillation</label>
+                        <label><input type="checkbox" id="ihd" name="IHD"> IHD</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="primary-button">
+                    <i class="fas fa-calculator"></i>
+                    Predict Severity
+                </button>
+            </form>
+
+            <div id="results" class="results-section hidden">
+                <h2>Prediction Results</h2>
+                <div id="severityResult" class="severity-result"></div>
+                <div id="probabilityChart" class="probability-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
+</body>
+</html> 

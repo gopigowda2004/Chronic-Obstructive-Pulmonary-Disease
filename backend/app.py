@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_cors import CORS
-from prediction import predict_copd_severity
+from backend.prediction import predict_copd_severity
 import json
 from functools import wraps
 from datetime import datetime

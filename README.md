@@ -40,8 +40,8 @@ copd-prediction-app/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/copd-prediction-app.git
-cd copd-prediction-app
+git clone https://github.com/gopigowda2004/Chronic-Obstructive-Pulmonary-Disease.git
+Chronic-Obstructive-Pulmonary-Disease
 ```
 
 ### 2. Set Up a Virtual Environment
@@ -92,18 +92,14 @@ The application will be accessible at: `http://127.0.0.1:5000`
 - API endpoints for mobile or third-party apps  
 - Deployment on cloud platforms like Heroku, Render, or AWS
 
-## 👨‍💻 Author
+## 📃 IMAGES
 
-**Muhammed Biilal S**  
-Founder & Developer  
-GitHub: [https://github.com/2003MBS](https://github.com/2003MBS) 
-LinkedIn: [www.linkedin.com/in/muhammed-bilal-s-61376a229](www.linkedin.com/in/muhammed-bilal-s-61376a229)
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/78058425-17e7-4e93-af40-86c120fbff49" />
 
-## 📃 License
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/263caaf2-7391-4b70-8df7-20f060ee189a" />
 
-This project is licensed under the **MIT License**. Feel free to use, modify, and distribute for personal or commercial purposes.
 
----
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/cb7c758e-3344-44fe-b735-ab704ed6b7f3" />
 
-Let me know if you'd like a downloadable version or if you're planning to deploy it somewhere—I can help you set that up too!
 
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/3fdd25d3-1066-4997-925e-e5316be4e314" />
